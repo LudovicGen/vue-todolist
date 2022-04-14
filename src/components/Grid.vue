@@ -44,9 +44,9 @@
     <v-container style="height: 100%">
       <v-row style="height: 50vh">
         <v-col cols="3" v-for="(ticket, index) in baseTicket" :key="index"
-          ><AppColumn
+          ><TheCard
             :item="ticket"
-            @destroy="destroy(index)"
+            @completed="completed(index, ticket)"
             @selected="selected(index)"
           />
         </v-col>
@@ -57,11 +57,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import AppColumn from "@/components/AppColumn.vue";
+import TheCard from "@/components/TheCard.vue";
 import ModalsTheTicket from "@/components/Modals/TheTicket.vue";
 import { Responsable, Ticket } from "@/utils/defaultObject";
 
-@Component({ components: { AppColumn, ModalsTheTicket } })
+@Component({ components: { TheCard, ModalsTheTicket } })
 export default class Grid extends Vue {
   public showMethod = false;
 
@@ -102,8 +102,8 @@ export default class Grid extends Vue {
     }
   }
 
-  public destroy(index: number): void {
-    this.baseTicket.splice(index, 1);
+  public completed(index: number, item: Ticket): void {
+    this.baseTicket.splice(index, 1, { ...item, completed: true });
   }
 
   public multipleDestroy(): void {
@@ -122,8 +122,6 @@ export default class Grid extends Vue {
   }
 
   public sort(): void {
-    console.log(this.option);
-
     this.baseTicket = this.baseTicket.sort((a, b) => {
       const A = a.name;
       const B = b.name;
