@@ -18,9 +18,3 @@ export default Vue.extend({
   }),
 });
 </script>
-
-<style>
-.no-uppercase {
-  text-transform: none;
-}
-</style>

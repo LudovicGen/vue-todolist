@@ -1,8 +1,19 @@
 <template>
   <v-container style="height: 100%">
     <v-toolbar elevation="0" class="mb-4">
-      <h1 class="text-h3 mt-3">Vue todo</h1>
+      <h1 class="text-h3 mt-3 mr-3">Vue todo</h1>
+      <v-avatar size="36" color="primary" class="white--text">{{
+        baseTicket.length
+      }}</v-avatar>
       <v-spacer></v-spacer>
+      <v-btn
+        @click="multipleDestroy"
+        class="mr-3 no-uppercase"
+        elevation="0"
+        :disabled="totalSelected.length > 0 ? false : true"
+        >Suppression
+        <v-avatar size="30">{{ this.totalSelected.length }}</v-avatar>
+      </v-btn>
       <ModalsTheTicket
         v-model="newTicket"
         :dialog="showMethod"
@@ -18,7 +29,11 @@
     <v-container style="height: 100%">
       <v-row style="height: 50vh">
         <v-col cols="3" v-for="(ticket, index) in baseTicket" :key="index"
-          ><AppColumn :item="ticket" @destroy="destroy(index)" />
+          ><AppColumn
+            :item="ticket"
+            @destroy="destroy(index)"
+            @selected="selected(index)"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -38,6 +53,8 @@ export default class Grid extends Vue {
   public newTicket = {} as Ticket;
 
   public baseTicket: Ticket[] = [];
+
+  public totalSelected: number[] = [];
 
   public loadResponsable: Responsable[] = [
     { firstName: "John", lastName: "Doe" },
@@ -60,11 +77,31 @@ export default class Grid extends Vue {
       this.showMethod = false;
       this.newTicket = {} as Ticket;
     }
-    console.log(this.baseTicket);
   }
 
   public destroy(index: number): void {
     this.baseTicket.splice(index, 1);
   }
+
+  public multipleDestroy(): void {
+    this.totalSelected.forEach((index) => {
+      this.baseTicket.splice(index, 1);
+    });
+    this.totalSelected = [];
+  }
+
+  public selected(index: number): void {
+    if (this.totalSelected.includes(index)) {
+      this.totalSelected.splice(index, 1);
+    } else {
+      this.totalSelected.push(index);
+    }
+  }
 }
 </script>
+
+<style>
+.no-uppercase {
+  text-transform: none;
+}
+</style>

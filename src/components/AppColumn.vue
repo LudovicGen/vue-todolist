@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="0" outlined>
+  <v-card elevation="0" outlined @click="selected">
     <v-card-title>{{ item.name ? item.name : "Non renseigné" }}</v-card-title>
     <v-card-text>
       <p>Temps: {{ item.nbHours ? item.nbHours : "Non renseigné" }}</p>
@@ -18,36 +18,22 @@
       </p>
     </v-card-text>
     <v-card-actions>
-      <v-row>
-        <v-col cols="6">
-          <ModalsTheTicket
-            v-model="item"
-            :dialog="showMethod"
-            title="Modifier un ticket"
-            @close="close"
-            @action="close"
-          >
-            <v-btn
-              block
-              elevation="0"
-              class="text-capitalize text-body-1 mr-2"
-              color="primary"
-              @click="showMethod = true"
-              >Mettre à jour</v-btn
-            >
-          </ModalsTheTicket>
-        </v-col>
-        <v-col cols="6">
-          <v-btn
-            block
-            elevation="0"
-            class="text-capitalize text-body-1"
-            color="error"
-            @click="destroy"
-            >Supprimé</v-btn
-          >
-        </v-col>
-      </v-row>
+      <ModalsTheTicket
+        v-model="item"
+        :dialog="showMethod"
+        title="Modifier un ticket"
+        @close="close"
+        @action="close"
+      >
+        <v-btn
+          block
+          elevation="0"
+          class="text-capitalize text-body-1 mr-2"
+          color="primary"
+          @click="showMethod = true"
+          >Mettre à jour</v-btn
+        >
+      </ModalsTheTicket>
     </v-card-actions>
   </v-card>
 </template>
@@ -71,6 +57,11 @@ export default class AppColumn extends Vue {
 
   @Emit("destroy")
   public destroy(): void {
+    // This is intentional
+  }
+
+  @Emit("selected")
+  public selected(): void {
     // This is intentional
   }
 }

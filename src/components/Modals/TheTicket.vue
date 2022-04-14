@@ -70,7 +70,7 @@ export default class ModalsTheTicket extends Vue {
     if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
       this.action;
     } else {
-      console.error("dommage");
+      console.error("error");
     }
   }
 }
