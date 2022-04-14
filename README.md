@@ -1,4 +1,4 @@
-# my_fist_project
+# Vue todo
 
 ## Project setup
 ```
