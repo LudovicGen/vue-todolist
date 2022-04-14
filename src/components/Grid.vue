@@ -6,6 +6,21 @@
         baseTicket.length
       }}</v-avatar>
       <v-spacer></v-spacer>
+
+      <v-autocomplete
+        v-model="option"
+        class="mr-3"
+        label="Trié par"
+        style="width: 30px"
+        outlined
+        dense
+        hide-details="false"
+        :items="sorts"
+        item-text="name"
+        item-value="value"
+        @change="sort"
+      />
+
       <v-btn
         @click="multipleDestroy"
         class="mr-3 no-uppercase"
@@ -62,6 +77,14 @@ export default class Grid extends Vue {
     { firstName: "Jack", lastName: "Doe" },
   ];
 
+  public sorts = [
+    { name: "Nom", value: ".name" },
+    { name: "Responsable", value: ".responsable.fistName" },
+    { name: "Temps", value: ".nbHours" },
+  ];
+
+  public option = { name: "Nom", value: "name" };
+
   public close(): void {
     this.showMethod = false;
     this.newTicket = {} as Ticket;
@@ -96,6 +119,24 @@ export default class Grid extends Vue {
     } else {
       this.totalSelected.push(index);
     }
+  }
+
+  public sort(): void {
+    console.log(this.option);
+
+    this.baseTicket = this.baseTicket.sort((a, b) => {
+      const A = a.name;
+      const B = b.name;
+
+      console.log(A);
+      if (A < B) {
+        return -1;
+      }
+      if (A > B) {
+        return 1;
+      }
+      return 0;
+    });
   }
 }
 </script>
