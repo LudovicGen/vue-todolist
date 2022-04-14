@@ -5,7 +5,7 @@
     </template>
     <v-card style="overflow: hidden" justify="start">
       <v-card-title class="text-h5 font-weight-bold">
-        Ajouter une tâche
+        {{ title }}
         <v-spacer />
       </v-card-title>
       <v-card-text class="text-body-1" align="start">
@@ -56,6 +56,9 @@ export default class ModalsTheTicket extends Vue {
 
   @Prop({ type: Boolean, default: false })
   public dialog!: boolean;
+
+  @Prop({ type: String, required: true })
+  public title!: string;
 
   @Emit("close")
   public close(): void {

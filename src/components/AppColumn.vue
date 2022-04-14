@@ -1,15 +1,77 @@
 <template>
-  <v-card elevation="0" height="100%">
-    <v-card-title>{{ title }}</v-card-title>
+  <v-card elevation="0" outlined>
+    <v-card-title>{{ item.name ? item.name : "Non renseigné" }}</v-card-title>
+    <v-card-text>
+      <p>Temps: {{ item.nbHours ? item.nbHours : "Non renseigné" }}</p>
+      <p>
+        Auteur:
+        {{
+          item.responsable.firstName
+            ? item.responsable.firstName
+            : "Non renseigné"
+        }}
+        {{
+          item.responsable.lastName
+            ? item.responsable.lastName
+            : "Non renseigné"
+        }}
+      </p>
+    </v-card-text>
+    <v-card-actions>
+      <v-row>
+        <v-col cols="6">
+          <ModalsTheTicket
+            v-model="item"
+            :dialog="showMethod"
+            title="Modifier un ticket"
+            @close="close"
+            @action="close"
+          >
+            <v-btn
+              block
+              elevation="0"
+              class="text-capitalize text-body-1 mr-2"
+              color="primary"
+              @click="showMethod = true"
+              >Mettre à jour</v-btn
+            >
+          </ModalsTheTicket>
+        </v-col>
+        <v-col cols="6">
+          <v-btn
+            block
+            elevation="0"
+            class="text-capitalize text-body-1"
+            color="error"
+            @click="destroy"
+            >Supprimé</v-btn
+          >
+        </v-col>
+      </v-row>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Ticket } from "@/utils/defaultObject";
+import { PropType } from "vue";
+import { Component, Emit, Prop, Vue } from "vue-property-decorator";
+import ModalsTheTicket from "@/components/Modals/TheTicket.vue";
 
-@Component({})
+@Component({ components: { ModalsTheTicket } })
 export default class AppColumn extends Vue {
-  @Prop({ type: String, required: true })
-  private readonly title!: string;
+  @Prop({ type: Object as PropType<Ticket> })
+  public item!: Ticket;
+
+  public showMethod = false;
+
+  public close(): void {
+    this.showMethod = false;
+  }
+
+  @Emit("destroy")
+  public destroy(): void {
+    // This is intentional
+  }
 }
 </script>
