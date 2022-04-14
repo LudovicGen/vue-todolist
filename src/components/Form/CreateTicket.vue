@@ -65,7 +65,8 @@ export default class FormCreateTicket extends Vue {
 
   public numberRules = [
     (value: number | undefined): string | true =>
-      (value != undefined && value > 0) || "Ce champ est requis",
+      (value != undefined && value > 0 && typeof value === "number") ||
+      "Ce champ est requis",
   ];
 }
 </script>

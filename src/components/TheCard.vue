@@ -30,7 +30,7 @@
             <v-btn
               block
               elevation="0"
-              class="text-capitalize text-body-1 mr-2"
+              class="no-uppercase text-body-1 mr-2"
               color="primary"
               @click.stop="showMethod = true"
               >Mettre à jour</v-btn
