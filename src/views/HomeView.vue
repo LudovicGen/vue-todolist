@@ -1,16 +1,16 @@
 <template>
-  <div class="home">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div class="home" style="height: 100%">
+    <Grid />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import Grid from "@/components/Grid.vue"; // @ is an alias to /src
 
 @Component({
   components: {
-    HelloWorld,
+    Grid,
   },
 })
 export default class HomeView extends Vue {}
