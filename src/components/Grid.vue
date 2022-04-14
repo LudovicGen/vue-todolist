@@ -91,10 +91,22 @@ export default class Grid extends Vue {
   }
 
   public save(): void {
+    const falseNb = this.baseTicket.reduce(
+      (n, e) =>
+        e.responsable === this.newTicket.responsable ? e.nbHours + n : n,
+      0
+    );
+
+    const filtered = this.baseTicket.filter(
+      (e) => e.responsable !== this.newTicket.responsable
+    );
+
     if (
       this.newTicket.name &&
       this.newTicket.nbHours &&
-      this.newTicket.responsable
+      this.newTicket.responsable &&
+      falseNb >= 10 &&
+      filtered.length <= 3
     ) {
       this.baseTicket.push(this.newTicket);
       this.showMethod = false;
