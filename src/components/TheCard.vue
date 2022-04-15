@@ -1,21 +1,14 @@
 <template>
-  <v-card elevation="0" outlined @click="selected" :disabled="item.completed">
+  <v-card
+    elevation="0"
+    outlined
+    @click="selected"
+    :disabled="item.completed"
+    class="mb-5"
+  >
     <v-card-title>{{ item.name ? item.name : "Non renseigné" }}</v-card-title>
     <v-card-text>
       <p>Temps: {{ item.nbHours ? item.nbHours : "Non renseigné" }} heure(s)</p>
-      <p>
-        Auteur:
-        {{
-          item.responsable.firstName
-            ? item.responsable.firstName
-            : "Non renseigné"
-        }}
-        {{
-          item.responsable.lastName
-            ? item.responsable.lastName
-            : "Non renseigné"
-        }}
-      </p>
     </v-card-text>
     <v-card-actions v-if="!item.completed">
       <v-row>
@@ -53,15 +46,15 @@
 </template>
 
 <script lang="ts">
-import { Ticket } from "@/utils/defaultObject";
 import { PropType } from "vue";
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import ModalsTheTicket from "@/components/Modals/TheTicket.vue";
+import { TicketModel } from "@/store/models";
 
 @Component({ components: { ModalsTheTicket } })
 export default class TheCard extends Vue {
-  @Prop({ type: Object as PropType<Ticket> })
-  public item!: Ticket;
+  @Prop({ type: Object as PropType<TicketModel> })
+  public item!: TicketModel;
 
   public showMethod = false;
 

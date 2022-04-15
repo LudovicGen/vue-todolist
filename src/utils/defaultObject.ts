@@ -1,11 +1,14 @@
 export interface Ticket {
+  id: string;
   name: string;
   nbHours: number;
-  responsable: Responsable;
+  responsable_id: Responsable;
   completed: boolean;
 }
 
 export interface Responsable {
+  id: string;
   firstName: string;
-  lastName?: string;
+  lastName: string;
+  tickets: Ticket[];
 }

@@ -17,7 +17,7 @@
     />
     <v-autocomplete
       dense
-      v-model="ticket.responsable"
+      v-model="ticket.responsable_id"
       label="Responsable"
       :items="loadResponsable"
       item-text="firstName"
@@ -44,19 +44,15 @@
 
 <script lang="ts">
 import { Component, VModel, Vue } from "vue-property-decorator";
-import { Responsable, Ticket } from "@/utils/defaultObject";
 import { PropType } from "vue";
+import { ResponsableModel, TicketModel } from "@/store/models";
 
 @Component({})
 export default class FormCreateTicket extends Vue {
-  @VModel({ type: Object as PropType<Ticket> })
-  public ticket!: Ticket;
+  @VModel({ type: Object as PropType<TicketModel> })
+  public ticket!: TicketModel;
 
-  public loadResponsable: Responsable[] = [
-    { firstName: "John", lastName: "Doe" },
-    { firstName: "Jane", lastName: "Doe" },
-    { firstName: "Jack", lastName: "Doe" },
-  ];
+  public loadResponsable: ResponsableModel[] = [];
 
   public nameRules = [
     (value: string | undefined): string | true =>
@@ -68,5 +64,9 @@ export default class FormCreateTicket extends Vue {
       (value != undefined && value > 0 && typeof value === "number") ||
       "Ce champ est requis",
   ];
+
+  public created(): void {
+    this.loadResponsable = ResponsableModel.all();
+  }
 }
 </script>

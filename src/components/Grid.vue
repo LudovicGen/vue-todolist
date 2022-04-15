@@ -43,12 +43,27 @@
     </v-toolbar>
     <v-container style="height: 100%">
       <v-row style="height: 50vh">
-        <v-col cols="3" v-for="(ticket, index) in baseTicket" :key="index"
-          ><TheCard
-            :item="ticket"
-            @completed="completed(index, ticket)"
-            @selected="selected(index)"
-          />
+        <v-col
+          cols="3"
+          v-for="(responsable, index) in loadResponsable"
+          :key="'responsable' + index"
+        >
+          <v-card elevation="0" height="100%">
+            <v-card-title>{{
+              `${responsable.firstName} ${responsable.lastName}`
+            }}</v-card-title>
+            <div
+              class="red--text"
+              v-for="(ticket, index) in responsable.tickets"
+              :key="'ticket' + index"
+            >
+              <TheCard
+                :item="ticket"
+                @completed="completed(index, ticket)"
+                @selected="selected(index)"
+              />
+            </div>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -59,7 +74,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import TheCard from "@/components/TheCard.vue";
 import ModalsTheTicket from "@/components/Modals/TheTicket.vue";
-import { Responsable, Ticket } from "@/utils/defaultObject";
+import { Ticket } from "@/utils/defaultObject";
+import { ResponsableModel } from "@/store/models";
+import { responsablesData } from "@/store/seed";
 
 @Component({ components: { TheCard, ModalsTheTicket } })
 export default class Grid extends Vue {
@@ -71,11 +88,7 @@ export default class Grid extends Vue {
 
   public totalSelected: number[] = [];
 
-  public loadResponsable: Responsable[] = [
-    { firstName: "John", lastName: "Doe" },
-    { firstName: "Jane", lastName: "Doe" },
-    { firstName: "Jack", lastName: "Doe" },
-  ];
+  public loadResponsable: ResponsableModel[] = [];
 
   public sorts = [
     { name: "Nom", value: ".name" },
@@ -93,18 +106,18 @@ export default class Grid extends Vue {
   public save(): void {
     const falseNb = this.baseTicket.reduce(
       (n, e) =>
-        e.responsable === this.newTicket.responsable ? e.nbHours + n : n,
+        e.responsable_id === this.newTicket.responsable_id ? e.nbHours + n : n,
       0
     );
 
     const filtered = this.baseTicket.filter(
-      (e) => e.responsable !== this.newTicket.responsable
+      (e) => e.responsable_id !== this.newTicket.responsable_id
     );
 
     if (
       this.newTicket.name &&
       this.newTicket.nbHours &&
-      this.newTicket.responsable &&
+      this.newTicket.responsable_id &&
       falseNb <= 10 &&
       filtered.length <= 3
     ) {
@@ -112,6 +125,13 @@ export default class Grid extends Vue {
       this.showMethod = false;
       this.newTicket = {} as Ticket;
     }
+  }
+
+  public async created(): Promise<void> {
+    const initialData = responsablesData;
+    ResponsableModel.insert({ data: initialData });
+
+    this.loadResponsable = ResponsableModel.query().withAll().get();
   }
 
   public completed(index: number, item: Ticket): void {
