@@ -3,6 +3,7 @@ import { ResponsableModel } from "./reponsable.model";
 
 export class TicketModel extends Model {
   static entity = "ticket";
+  // static primaryKey = ["id"];
 
   static fields() {
     return {

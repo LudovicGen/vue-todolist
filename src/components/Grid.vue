@@ -7,7 +7,7 @@
       }}</v-avatar>
       <v-spacer></v-spacer>
 
-      <v-autocomplete
+      <!-- <v-autocomplete
         v-model="option"
         class="mr-3"
         label="Trié par"
@@ -19,7 +19,7 @@
         item-text="name"
         item-value="value"
         @change="sort"
-      />
+      /> -->
 
       <v-btn
         @click="multipleDestroy"
@@ -60,7 +60,7 @@
               <TheCard
                 :item="ticket"
                 @completed="completed(ticket)"
-                @selected="selected(index)"
+                @selected="selected(ticket.id)"
               />
             </div>
           </v-card>
@@ -86,17 +86,9 @@ export default class Grid extends Vue {
 
   public tickets: TicketModel[] = [];
 
-  public totalSelected: number[] = [];
+  public totalSelected: string[] = [];
 
   public loadResponsable: ResponsableModel[] = [];
-
-  public sorts = [
-    { name: "Nom", value: ".name" },
-    { name: "Responsable", value: ".responsable.fistName" },
-    { name: "Temps", value: ".nbHours" },
-  ];
-
-  public option = { name: "Nom", value: "name" };
 
   public close(): void {
     this.showMethod = false;
@@ -119,18 +111,30 @@ export default class Grid extends Vue {
       this.newTicket.nbHours &&
       this.newTicket.responsable_id
     ) {
-      TicketModel.insert({ data: { ...this.newTicket } }).then(() => {
+      console.log(this.newTicket);
+      TicketModel.insert({
+        data: {
+          ...this.newTicket,
+          responsable_id: this.newTicket.responsable_id.id,
+          assignee: this.newTicket.responsable_id,
+        },
+      }).then(() => {
         this.close();
+        this.loadData();
       });
     }
+  }
+
+  public loadData(): void {
+    this.tickets = TicketModel.all();
+    this.loadResponsable = ResponsableModel.query().withAll().get();
   }
 
   public async created(): Promise<void> {
     const initialData = responsablesData;
     ResponsableModel.insert({ data: initialData });
 
-    this.tickets = TicketModel.all();
-    this.loadResponsable = ResponsableModel.query().withAll().get();
+    this.loadData();
   }
 
   public completed(item: Ticket): void {
@@ -142,37 +146,19 @@ export default class Grid extends Vue {
       where: item.id,
     });
 
-    console.log(TicketModel.all());
+    this.loadData();
   }
 
   public multipleDestroy(): void {
-    // this.totalSelected.forEach((index) => {
-    //   this.baseTicket.splice(index, 1);
-    // });
-    // this.totalSelected = [];
+    this.totalSelected.forEach((id) => {
+      TicketModel.delete(id);
+    });
+    this.totalSelected = [];
+    this.loadData();
   }
 
-  public selected(index: number): void {
-    if (this.totalSelected.includes(index)) {
-      this.totalSelected.splice(index, 1);
-    } else {
-      this.totalSelected.push(index);
-    }
-  }
-
-  public sort(): void {
-    // this.baseTicket = this.baseTicket.sort((a, b) => {
-    //   const A = a.name;
-    //   const B = b.name;
-    //   console.log(A);
-    //   if (A < B) {
-    //     return -1;
-    //   }
-    //   if (A > B) {
-    //     return 1;
-    //   }
-    //   return 0;
-    // });
+  public selected(index: string): void {
+    this.totalSelected.push(index);
   }
 }
 </script>
