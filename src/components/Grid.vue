@@ -105,7 +105,7 @@ export default class Grid extends Vue {
       this.newTicket.name &&
       this.newTicket.nbHours &&
       this.newTicket.responsable &&
-      falseNb >= 10 &&
+      falseNb <= 10 &&
       filtered.length <= 3
     ) {
       this.baseTicket.push(this.newTicket);
