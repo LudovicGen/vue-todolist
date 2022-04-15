@@ -3,7 +3,7 @@
     <v-toolbar elevation="0" class="mb-4">
       <h1 class="text-h3 mt-3 mr-3">Vue todo</h1>
       <v-avatar size="36" color="primary" class="white--text">{{
-        baseTicket.length
+        tickets.length
       }}</v-avatar>
       <v-spacer></v-spacer>
 
@@ -59,7 +59,7 @@
             >
               <TheCard
                 :item="ticket"
-                @completed="completed(index, ticket)"
+                @completed="completed(ticket)"
                 @selected="selected(index)"
               />
             </div>
@@ -71,11 +71,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import TheCard from "@/components/TheCard.vue";
 import ModalsTheTicket from "@/components/Modals/TheTicket.vue";
 import { Ticket } from "@/utils/defaultObject";
-import { ResponsableModel } from "@/store/models";
+import { ResponsableModel, TicketModel } from "@/store/models";
 import { responsablesData } from "@/store/seed";
 
 @Component({ components: { TheCard, ModalsTheTicket } })
@@ -84,7 +84,7 @@ export default class Grid extends Vue {
 
   public newTicket = {} as Ticket;
 
-  public baseTicket: Ticket[] = [];
+  public tickets: TicketModel[] = [];
 
   public totalSelected: number[] = [];
 
@@ -104,26 +104,24 @@ export default class Grid extends Vue {
   }
 
   public save(): void {
-    const falseNb = this.baseTicket.reduce(
-      (n, e) =>
-        e.responsable_id === this.newTicket.responsable_id ? e.nbHours + n : n,
-      0
-    );
+    // const falseNb = this.tickets.reduce(
+    //   (n, e) =>
+    //     e.responsable_id === this.newTicket.responsable_id ? e.nbHours + n : n,
+    //   0
+    // );
 
-    const filtered = this.baseTicket.filter(
-      (e) => e.responsable_id !== this.newTicket.responsable_id
-    );
+    // const filtered = this.baseTicket.filter(
+    //   (e) => e.responsable_id !== this.newTicket.responsable_id
+    // );
 
     if (
       this.newTicket.name &&
       this.newTicket.nbHours &&
-      this.newTicket.responsable_id &&
-      falseNb <= 10 &&
-      filtered.length <= 3
+      this.newTicket.responsable_id
     ) {
-      this.baseTicket.push(this.newTicket);
-      this.showMethod = false;
-      this.newTicket = {} as Ticket;
+      TicketModel.insert({ data: { ...this.newTicket } }).then(() => {
+        this.close();
+      });
     }
   }
 
@@ -131,18 +129,27 @@ export default class Grid extends Vue {
     const initialData = responsablesData;
     ResponsableModel.insert({ data: initialData });
 
+    this.tickets = TicketModel.all();
     this.loadResponsable = ResponsableModel.query().withAll().get();
   }
 
-  public completed(index: number, item: Ticket): void {
-    this.baseTicket.splice(index, 1, { ...item, completed: true });
+  public completed(item: Ticket): void {
+    TicketModel.update({
+      data: {
+        ...item,
+        completed: true,
+      },
+      where: item.id,
+    });
+
+    console.log(TicketModel.all());
   }
 
   public multipleDestroy(): void {
-    this.totalSelected.forEach((index) => {
-      this.baseTicket.splice(index, 1);
-    });
-    this.totalSelected = [];
+    // this.totalSelected.forEach((index) => {
+    //   this.baseTicket.splice(index, 1);
+    // });
+    // this.totalSelected = [];
   }
 
   public selected(index: number): void {
@@ -154,19 +161,18 @@ export default class Grid extends Vue {
   }
 
   public sort(): void {
-    this.baseTicket = this.baseTicket.sort((a, b) => {
-      const A = a.name;
-      const B = b.name;
-
-      console.log(A);
-      if (A < B) {
-        return -1;
-      }
-      if (A > B) {
-        return 1;
-      }
-      return 0;
-    });
+    // this.baseTicket = this.baseTicket.sort((a, b) => {
+    //   const A = a.name;
+    //   const B = b.name;
+    //   console.log(A);
+    //   if (A < B) {
+    //     return -1;
+    //   }
+    //   if (A > B) {
+    //     return 1;
+    //   }
+    //   return 0;
+    // });
   }
 }
 </script>
